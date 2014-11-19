@@ -6,8 +6,10 @@ var ROW_COUNT = 10;
 var PIECE_WIDTH = Math.floor(IMAGE_WIDTH / COLUMN_COUNT);
 var PIECE_HEIGHT = Math.floor(IMAGE_HEIGHT / ROW_COUNT);
 
+var dragElement = null;
+var cx, cy;
 
-window.onload = function() {
+function load() {
 
     for (var row = 0; row < ROW_COUNT; row++) {
         for (var col = 0; col < COLUMN_COUNT; col++) {
@@ -28,9 +30,38 @@ window.onload = function() {
             square.style['background-position-y'] = (-y).toString() + "px";
 
             document.body.appendChild(square);
+
+            square.addEventListener('mousedown', function(evt) {
+                dragElement = this;
+                cx = evt.clientX - parseInt(this.style.left);
+                cy = evt.clientY - parseInt(this.style.top);
+            });
         }
     }
+
+    document.body.addEventListener('mousemove', function(evt) {
+
+        if (!dragElement)
+            return;
+
+        var x = evt.clientX - cx;
+        var y = evt.clientY - cy;
+        dragElement.style.left = x.toString() + 'px';
+        dragElement.style.top = y.toString() + 'px';
+
+    });
+
+    document.body.addEventListener('mouseup', function () {
+
+        dragElement = null;
+
+    });
+
 }
+
+
+
+
 
 function shuffle() {
 
@@ -42,10 +73,12 @@ function shuffle() {
             var y = Math.min(window.innerHeight - PIECE_HEIGHT,
                     Math.floor(Math.random() * window.innerHeight));
 
-            var square = document.getElementById("square_" + row + "_" + col);
+            var square = document.getElementById('square_' + row + '_' + col);
 
-            square.style.left = x.toString() + "px";
-            square.style.top = y.toString() + "px";
+            square.style.left = x.toString() + 'px';
+            square.style.top = y.toString() + 'px';
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', load, false);
